@@ -44,18 +44,48 @@ def countFreshIngredients(ranges, ins):
 def countPossibleFreshIngredients(ranges):
     count = 0
     i = []
+    
+    newranges =removeOverlapping(ranges)
 
+    for l,h in set(newranges):
+        count += (h-l+1)
+    print(count)
+    print(set(newranges))
+
+def removeOverlapping(ranges):
+   
+    newranges = []
+    for i,j in ranges:
+        hasOverlap, l ,h = getOverlappingRange(i,j, ranges)
+        if (hasOverlap):
+            newranges.append((min(i,l),max(j,h)))
+        else:
+            newranges.append((i,j))              
+    if hasOverlappingRanges(newranges):
+        return removeOverlapping(newranges)
+    return newranges
+
+def getOverlappingRange(l,h,ranges):
+    for i,j in ranges:
+        if not(i == l and j == h):
+            if (i<=l and j>=l) or (i<=h and j>=h) or (i>=l and j<=h):
+                # print(f'Overlapping: {i}-{j} overlaps with {l}-{h}')
+                return True, i ,j
+    return False, 0, 0
+
+def hasOverlappingRanges(ranges):
     for l,h in ranges:
-        # count += (h-l)
-        i = i + [*range(l,h+1)]
-    print(len(set(i)))
+        hasOverlap, l ,h = getOverlappingRange(l,h,ranges)
+        if hasOverlap:
+            return True
+    return False  
 
 def main():
     input = readFile()
 
     ranges = readRanges(input)
-    ins = readIngredients(input)
-    countFreshIngredients(ranges, ins)
+    # ins = readIngredients(input)
+    # countFreshIngredients(ranges, ins)
     countPossibleFreshIngredients(ranges)
 
 main()
